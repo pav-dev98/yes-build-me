@@ -1,0 +1,2 @@
+-- YesFundMe Database Schema
+-- Placeholder - will be implemented in Epic 2
