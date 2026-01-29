@@ -1,0 +1,175 @@
+import { useState, useEffect } from 'react'
+import { useParams, Link } from 'react-router-dom'
+import api from '../api/client'
+import { useAuth } from '../context/AuthContext'
+
+const categoryColors = {
+  community: 'bg-blue-100 text-blue-800',
+  animals: 'bg-orange-100 text-orange-800',
+  creative: 'bg-purple-100 text-purple-800',
+  education: 'bg-green-100 text-green-800',
+  medical: 'bg-red-100 text-red-800',
+  business: 'bg-yellow-100 text-yellow-800',
+  sports: 'bg-indigo-100 text-indigo-800',
+  emergency: 'bg-pink-100 text-pink-800',
+}
+
+export default function CampaignDetail() {
+  const { id } = useParams()
+  const { user } = useAuth()
+  const [campaign, setCampaign] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    fetchCampaign()
+  }, [id])
+
+  const fetchCampaign = async () => {
+    try {
+      const data = await api.get(`/campaigns/${id}`)
+      setCampaign(data)
+    } catch (err) {
+      setError('Campaign not found')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
+      </div>
+    )
+  }
+
+  if (error || !campaign) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">{error || 'Campaign not found'}</h1>
+          <Link to="/campaigns" className="text-green-600 hover:text-green-700">
+            Back to campaigns
+          </Link>
+        </div>
+      </div>
+    )
+  }
+
+  const progress = Math.min((campaign.current_amount / campaign.goal_amount) * 100, 100)
+  const categoryColor = categoryColors[campaign.category] || 'bg-gray-100 text-gray-800'
+  const isOwner = user?.id === campaign.user_id
+
+  return (
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-6xl mx-auto px-4">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Main Content */}
+          <div className="lg:col-span-2">
+            <div className="bg-white rounded-lg shadow-md overflow-hidden">
+              {campaign.image_url && (
+                <img
+                  src={campaign.image_url}
+                  alt={campaign.title}
+                  className="w-full h-64 md:h-96 object-cover"
+                />
+              )}
+
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <span className={`px-3 py-1 text-sm font-medium rounded-full ${categoryColor}`}>
+                    {campaign.category}
+                  </span>
+                  {isOwner && (
+                    <Link
+                      to={`/campaigns/${campaign.id}/edit`}
+                      className="px-4 py-2 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200"
+                    >
+                      Edit Campaign
+                    </Link>
+                  )}
+                </div>
+
+                <h1 className="text-3xl font-bold text-gray-900 mb-4">{campaign.title}</h1>
+
+                <div className="flex items-center text-gray-600 mb-6">
+                  <span>Created by {campaign.creator_name}</span>
+                </div>
+
+                <div className="prose max-w-none">
+                  <p className="text-gray-700 whitespace-pre-wrap">{campaign.description}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Donations List - Placeholder for Epic 5 */}
+            <div className="mt-8 bg-white rounded-lg shadow-md p-6">
+              <h2 className="text-xl font-bold text-gray-900 mb-4">
+                Donations ({campaign.donations?.length || 0})
+              </h2>
+              {campaign.donations && campaign.donations.length > 0 ? (
+                <div className="space-y-4">
+                  {campaign.donations.map((donation) => (
+                    <div key={donation.id} className="border-b border-gray-100 pb-4 last:border-0">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <p className="font-medium text-gray-900">
+                            {donation.is_anonymous
+                              ? 'Anonymous Donor'
+                              : donation.user_display_name || donation.donor_name || 'Guest'}
+                          </p>
+                          {donation.message && (
+                            <p className="text-gray-600 mt-1">{donation.message}</p>
+                          )}
+                        </div>
+                        <span className="font-bold text-green-600">
+                          ${donation.amount.toLocaleString()}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-gray-500">No donations yet. Be the first to donate!</p>
+              )}
+            </div>
+          </div>
+
+          {/* Sidebar */}
+          <div className="lg:col-span-1">
+            <div className="bg-white rounded-lg shadow-md p-6 sticky top-8">
+              <div className="mb-6">
+                <div className="flex justify-between items-end mb-2">
+                  <span className="text-3xl font-bold text-gray-900">
+                    ${campaign.current_amount.toLocaleString()}
+                  </span>
+                  <span className="text-gray-500">
+                    of ${campaign.goal_amount.toLocaleString()}
+                  </span>
+                </div>
+
+                <div className="w-full bg-gray-200 rounded-full h-3">
+                  <div
+                    className="bg-green-600 h-3 rounded-full transition-all duration-500"
+                    style={{ width: `${progress}%` }}
+                  />
+                </div>
+
+                <p className="text-sm text-gray-500 mt-2">
+                  {Math.round(progress)}% funded
+                </p>
+              </div>
+
+              {/* Donation form placeholder - will be built in Epic 5 */}
+              <div className="border-t border-gray-200 pt-6">
+                <h3 className="font-semibold text-gray-900 mb-4">Make a Donation</h3>
+                <p className="text-gray-500 text-sm">Donation form coming soon...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
