@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import api from '../api/client'
 import { useAuth } from '../context/AuthContext'
+import DonationForm from '../components/donations/DonationForm'
+import DonationList from '../components/donations/DonationList'
 
 const categoryColors = {
   community: 'bg-blue-100 text-blue-800',
@@ -34,6 +36,10 @@ export default function CampaignDetail() {
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleDonationSuccess = () => {
+    fetchCampaign()
   }
 
   if (loading) {
@@ -103,36 +109,10 @@ export default function CampaignDetail() {
               </div>
             </div>
 
-            {/* Donations List - Placeholder for Epic 5 */}
+            {/* Donations List */}
             <div className="mt-8 bg-white rounded-lg shadow-md p-6">
-              <h2 className="text-xl font-bold text-gray-900 mb-4">
-                Donations ({campaign.donations?.length || 0})
-              </h2>
-              {campaign.donations && campaign.donations.length > 0 ? (
-                <div className="space-y-4">
-                  {campaign.donations.map((donation) => (
-                    <div key={donation.id} className="border-b border-gray-100 pb-4 last:border-0">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <p className="font-medium text-gray-900">
-                            {donation.is_anonymous
-                              ? 'Anonymous Donor'
-                              : donation.user_display_name || donation.donor_name || 'Guest'}
-                          </p>
-                          {donation.message && (
-                            <p className="text-gray-600 mt-1">{donation.message}</p>
-                          )}
-                        </div>
-                        <span className="font-bold text-green-600">
-                          ${donation.amount.toLocaleString()}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-gray-500">No donations yet. Be the first to donate!</p>
-              )}
+              <h2 className="text-xl font-bold text-gray-900 mb-4">Donations</h2>
+              <DonationList donations={campaign.donations} />
             </div>
           </div>
 
@@ -161,10 +141,9 @@ export default function CampaignDetail() {
                 </p>
               </div>
 
-              {/* Donation form placeholder - will be built in Epic 5 */}
               <div className="border-t border-gray-200 pt-6">
                 <h3 className="font-semibold text-gray-900 mb-4">Make a Donation</h3>
-                <p className="text-gray-500 text-sm">Donation form coming soon...</p>
+                <DonationForm campaignId={campaign.id} onSuccess={handleDonationSuccess} />
               </div>
             </div>
           </div>
