@@ -4,15 +4,37 @@ import ProtectedRoute from './components/auth/ProtectedRoute'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import Dashboard from './pages/Dashboard'
+import BrowseCampaigns from './pages/BrowseCampaigns'
+import CampaignDetail from './pages/CampaignDetail'
+import CreateCampaign from './pages/CreateCampaign'
+import EditCampaign from './pages/EditCampaign'
 
 function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Navigate to="/login" replace />} />
+          <Route path="/" element={<Navigate to="/campaigns" replace />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/campaigns" element={<BrowseCampaigns />} />
+          <Route path="/campaigns/:id" element={<CampaignDetail />} />
+          <Route
+            path="/campaigns/new"
+            element={
+              <ProtectedRoute>
+                <CreateCampaign />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/campaigns/:id/edit"
+            element={
+              <ProtectedRoute>
+                <EditCampaign />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/dashboard"
             element={
