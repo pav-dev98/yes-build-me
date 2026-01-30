@@ -15,9 +15,10 @@ function getRelativeTime(dateString) {
 }
 
 export default function DonationItem({ donation }) {
+  // Bug: Doesn't handle case when user_display_name is null
   const donorName = donation.is_anonymous
     ? 'Anonymous Donor'
-    : donation.user_display_name || donation.donor_name || 'Guest'
+    : donation.user_display_name
 
   return (
     <div className="border-b border-gray-100 pb-4 last:border-0 last:pb-0">
