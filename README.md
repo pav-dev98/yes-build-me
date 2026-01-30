@@ -2,6 +2,17 @@
 
 A crowdfunding platform for learning full-stack development. This project is a GoFundMe clone built with modern web technologies.
 
+## Branches
+
+This repo has two branches for different learning paths:
+
+| Branch | Description |
+|--------|-------------|
+| `main` | **Greenfield** - Raw codebase. You'll need to run constitution and architecture yourself. Good for learning the full GoBuildMe workflow from scratch. |
+| `gbm-ready` | **Brownfield** - Constitution and architecture already complete. Jump straight into fixing bugs and building features. |
+
+When you fork this repo, you get both branches.
+
 ## Tech Stack
 
 - **Frontend:** React 19, Vite, Tailwind CSS v4
@@ -44,17 +55,26 @@ cd yes-build-me
 git remote add upstream git@github.com:Gauntlet-HQ/yes-build-me.git
 ```
 
-4. **Install dependencies:**
+4. **Choose your branch:**
+```bash
+# Greenfield - run constitution and architecture yourself
+git checkout main
+
+# Brownfield - constitution and architecture already done
+git checkout gbm-ready
+```
+
+5. **Install dependencies:**
 ```bash
 npm install
 ```
 
-5. **Seed the database:**
+6. **Seed the database:**
 ```bash
 npm run seed
 ```
 
-6. **Start the development server:**
+7. **Start the development server:**
 ```bash
 npm run dev
 ```
