@@ -8,10 +8,19 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const dbPath = path.join(__dirname, '..', 'server', 'yesfundme.db')
 const schemaPath = path.join(__dirname, 'schema.sql')
 
-// Remove existing database for clean seed
+// Remove existing database for clean seed (including WAL files)
+const walPath = dbPath + '-wal'
+const shmPath = dbPath + '-shm'
+
 if (fs.existsSync(dbPath)) {
   fs.unlinkSync(dbPath)
   console.log('Removed existing database')
+}
+if (fs.existsSync(walPath)) {
+  fs.unlinkSync(walPath)
+}
+if (fs.existsSync(shmPath)) {
+  fs.unlinkSync(shmPath)
 }
 
 const db = new Database(dbPath)
