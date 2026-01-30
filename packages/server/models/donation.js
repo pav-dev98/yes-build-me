@@ -1,6 +1,9 @@
 import db from '../db/index.js'
 
 export function createDonation({ campaignId, userId, amount, message, isAnonymous, donorName }) {
+  // Bug: These operations are not wrapped in a transaction
+  // If updateCampaign fails, the donation will still be recorded
+  // but the campaign total won't be updated
   const insertDonation = db.prepare(`
     INSERT INTO donations (campaign_id, user_id, amount, message, is_anonymous, donor_name)
     VALUES (?, ?, ?, ?, ?, ?)
@@ -12,20 +15,18 @@ export function createDonation({ campaignId, userId, amount, message, isAnonymou
     WHERE id = ?
   `)
 
-  const transaction = db.transaction(() => {
-    const result = insertDonation.run(
-      campaignId,
-      userId || null,
-      amount,
-      message || null,
-      isAnonymous ? 1 : 0,
-      donorName || null
-    )
-    updateCampaign.run(amount, campaignId)
-    return result.lastInsertRowid
-  })
+  const result = insertDonation.run(
+    campaignId,
+    userId || null,
+    amount,
+    message || null,
+    isAnonymous ? 1 : 0,
+    donorName || null
+  )
 
-  return transaction()
+  updateCampaign.run(amount, campaignId)
+
+  return result.lastInsertRowid
 }
 
 export function getDonationsForCampaign(campaignId) {
