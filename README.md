@@ -27,30 +27,80 @@ yesfundme/
 
 - Node.js 22.x or higher
 - npm 10.x or higher
+- GitHub account
 
-### Installation
+### Fork and Clone (Recommended for Contributors)
 
-1. Clone the repository:
+1. **Fork the repository** - Click the "Fork" button at the top right of the [repo page](https://github.com/Gauntlet-HQ/yes-build-me)
+
+2. **Clone your fork:**
 ```bash
-git clone git@github.com:Gauntlet-HQ/yes-build-me.git
+git clone git@github.com:YOUR-USERNAME/yes-build-me.git
+cd yes-build-me
 ```
 
-2. Install dependencies:
+3. **Add upstream remote** (to sync with original repo):
+```bash
+git remote add upstream git@github.com:Gauntlet-HQ/yes-build-me.git
+```
+
+4. **Install dependencies:**
 ```bash
 npm install
 ```
 
-3. Seed the database:
+5. **Seed the database:**
 ```bash
 npm run seed
 ```
 
-4. Start the development server:
+6. **Start the development server:**
 ```bash
 npm run dev
 ```
 
 This starts both the frontend (http://localhost:5173) and backend (http://localhost:3000) concurrently.
+
+## Contributing (Fixing Issues)
+
+This repo has intentional bugs for learning purposes. To fix an issue:
+
+1. **Find an issue** - Browse the [Issues](https://github.com/Gauntlet-HQ/yes-build-me/issues) tab
+
+2. **Create a branch** for your fix:
+```bash
+git checkout -b fix/issue-number-short-description
+# Example: git checkout -b fix/1-progress-bar-color
+```
+
+3. **Make your changes** and test them locally
+
+4. **Commit your changes:**
+```bash
+git add .
+git commit -m "Fix #1: description of your fix"
+```
+
+5. **Push to your fork:**
+```bash
+git push origin fix/issue-number-short-description
+```
+
+6. **Create a Pull Request:**
+   - Go to your fork on GitHub
+   - Click "Compare & pull request"
+   - Fill in the PR template describing your fix
+   - Reference the issue number (e.g., "Fixes #1")
+   - Submit the PR
+
+### Keeping Your Fork Updated
+
+```bash
+git fetch upstream
+git checkout main
+git merge upstream/main
+git push origin main
+```
 
 ## Available Scripts
 
